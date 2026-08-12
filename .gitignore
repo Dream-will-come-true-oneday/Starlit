@@ -1,0 +1,23 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+
+# 后端
+backend/.venv/
+backend/__pycache__/
+backend/*.db
+backend/.env
+
+# 数据与日志
+backend/data/*.json
+*.log
+
+# 编辑器
+.idea/
+.vscode/
+.DS_Store
+
+# 工作区内部数据（记忆日志等，不对外）
+.workbuddy/

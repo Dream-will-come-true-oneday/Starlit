@@ -1,0 +1,349 @@
+<template>
+  <div class="module-page">
+    <!-- 标题区 -->
+    <div class="module-header">
+      <div>
+        <h1 class="page-title">单词</h1>
+        <p class="page-desc">每天 5 个新词 · 艾宾浩斯曲线自动安排复盘</p>
+      </div>
+      <div class="header-stats">
+        <span class="badge badge-word">已学 {{ stats.learned }}</span>
+        <span class="badge badge-lit">掌握 {{ stats.mastered }}</span>
+      </div>
+    </div>
+
+    <!-- 等级切换：点击更高等级可调整本模块起点（自选难度） -->
+    <div class="level-tabs">
+      <button
+        v-for="lv in 5"
+        :key="lv"
+        class="level-tab"
+        :class="{ active: lv === currentLevel, locked: lv > unlockedLevel }"
+        @click="selectLevel(lv)"
+      >
+        L{{ lv }} · {{ LEVEL_NAMES[lv] }}
+        <span v-if="lv > unlockedLevel" class="lock">🔒</span>
+      </button>
+    </div>
+    <p v-if="unlockedLevel < 5" class="level-tip">🔒 点击锁定等级可从该难度开始学习（跳过前面内容，已学保留）</p>
+
+    <!-- 学习会话 -->
+    <section v-if="sessionActive" class="card learn-session fade-in">
+      <div class="ls-progress">正在学习 {{ sessionIndex + 1 }} / {{ sessionItems.length }}</div>
+      <WordCard :item="sessionItems[sessionIndex]" />
+      <div class="ls-actions">
+        <button class="btn btn-outline" @click="flipHint">重新看</button>
+        <button class="btn btn-primary" @click="markCurrentLearned">
+          {{ sessionIndex < sessionItems.length - 1 ? '记住了，下一个 →' : '完成本组学习 ✓' }}
+        </button>
+      </div>
+      <div class="ls-note">提示：点击卡片翻转查看释义，想清楚再点"记住了"</div>
+    </section>
+
+    <!-- 今日新学入口 -->
+    <section v-else-if="!sessionActive" class="card today-learn fade-in">
+      <div class="card-title">
+        <span>今日新学</span>
+        <span class="badge badge-word">{{ pendingWords.length }} 个待学</span>
+      </div>
+      <p v-if="pendingWords.length > 0" class="tl-desc">
+        今天要学：{{ pendingWords.map((w) => w.content).join(' · ') }}
+      </p>
+      <p v-else class="tl-desc">今天的新词已全部学完，明天继续！</p>
+      <button
+        v-if="pendingWords.length > 0"
+        class="btn btn-primary"
+        @click="startSession(pendingWords)"
+      >
+        开始学习 →
+      </button>
+    </section>
+
+    <!-- 已学列表 + 记忆曲线 -->
+    <section class="learned-section">
+      <h2 class="section-title"><span class="bar"></span>我的单词（点击查看记忆曲线）</h2>
+      <WordList :items="levelLearnedItems" :progress-map="progressMap" @select="selectedItem = $event" />
+
+      <div v-if="!levelLearnedItems.length" class="empty">
+        <div class="empty-icon">📖</div>
+        <p>这个等级还没有学习记录，先学一组新词吧</p>
+      </div>
+    </section>
+
+    <!-- 记忆曲线弹层 -->
+    <div v-if="selectedItem" class="modal-mask" @click.self="selectedItem = null">
+      <div class="modal">
+        <div class="modal-head">
+          <div>
+            <span class="modal-word">{{ selectedItem.content }}</span>
+            <span class="modal-meaning">{{ selectedItem.meaning }}</span>
+          </div>
+          <button class="btn-ghost" @click="selectedItem = null">✕</button>
+        </div>
+        <MemoryCurveChart :progress="progressMap[selectedItem.id] || null" />
+        <p class="modal-example">{{ selectedItem.example }}</p>
+        <p class="modal-example-cn">{{ selectedItem.exampleCn }}</p>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+import WordCard from '../components/word/WordCard.vue'
+import WordList from '../components/word/WordList.vue'
+import MemoryCurveChart from '../components/common/MemoryCurveChart.vue'
+import { useProgressStore } from '../stores/progressStore.js'
+import { usePlanStore } from '../stores/planStore.js'
+import { useModuleStore } from '../stores/moduleStore.js'
+import { DAILY_CONFIG } from '../composables/useDailyPlan.js'
+
+const progress = useProgressStore()
+const plan = usePlanStore()
+const module = useModuleStore()
+
+const LEVEL_NAMES = { 1: '日常', 2: '社交', 3: '职场', 4: '经济', 5: 'IT' }
+
+const currentLevel = ref(progress.moduleLevel('word'))
+const unlockedLevel = computed(() => progress.moduleLevel('word'))
+const selectedItem = ref(null)
+
+// 学习会话状态
+const sessionActive = ref(false)
+const sessionItems = ref([])
+const sessionIndex = ref(0)
+
+// 当前等级全部单词（浏览用）
+const levelItems = computed(() => module.getItems('word', currentLevel.value))
+
+// 已学（有进度记录）的单词
+const learnedItems = computed(() =>
+  levelItems.value.filter((item) => progressMap.value[item.id])
+)
+const levelLearnedItems = computed(() => learnedItems.value)
+
+// 今日待学（从跨等级合并列表按内容指针切片，与规划视图一致）
+const pendingWords = computed(() => {
+  const idx = progress.contentIndex.word
+  return module.getCombined('word').slice(idx, idx + DAILY_CONFIG.wordsPerDay)
+})
+
+/** 等级标签点击：未锁直接切换；锁定等级需确认后调整本模块起点 */
+function selectLevel(lv) {
+  if (lv <= unlockedLevel.value) {
+    currentLevel.value = lv
+    return
+  }
+  const ok = window.confirm(
+    `确定从 L${lv}（${LEVEL_NAMES[lv]}）开始学习单词？\n将跳过之前等级的内容，已学的单词和打卡记录不会丢失。`
+  )
+  if (ok) {
+    progress.setModuleLevel('word', lv)
+    currentLevel.value = lv
+  }
+}
+
+// 进度映射
+const progressMap = computed(() => {
+  const map = {}
+  progress.allProgress.forEach((p) => {
+    if (p.type === 'word') map[p.itemId] = p
+  })
+  return map
+})
+
+const stats = computed(() => {
+  let learned = 0
+  let mastered = 0
+  progress.allProgress.forEach((p) => {
+    if (p.type === 'word') {
+      learned += 1
+      if (p.isMastered) mastered += 1
+    }
+  })
+  return { learned, mastered }
+})
+
+function startSession(items) {
+  sessionItems.value = items
+  sessionIndex.value = 0
+  sessionActive.value = true
+}
+
+function markCurrentLearned() {
+  if (sessionIndex.value < sessionItems.value.length - 1) {
+    sessionIndex.value += 1
+  } else {
+    // 全部学完：提交进度，生成记忆曲线
+    progress.learnItems(sessionItems.value)
+    plan.invalidate()
+    sessionActive.value = false
+    selectedItem.value = sessionItems.value[0]
+  }
+}
+
+function flipHint() {
+  // 提示用户翻转卡片（WordCard 自带翻转交互）
+}
+</script>
+
+<style scoped>
+.module-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.page-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.header-stats {
+  display: flex;
+  gap: 8px;
+}
+
+.level-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.level-tab {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.level-tab:hover:not(:disabled) {
+  border-color: var(--word);
+  color: var(--text);
+}
+
+.level-tab.active {
+  background: rgba(91, 140, 255, 0.15);
+  border-color: var(--word);
+  color: #93b4ff;
+}
+
+.level-tab.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lock {
+  margin-left: 4px;
+  font-size: 11px;
+}
+
+.level-tip {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: -10px 0 16px;
+}
+
+.learn-session {
+  margin-bottom: 20px;
+}
+
+.ls-progress {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+}
+
+.ls-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.ls-note {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 10px;
+}
+
+.today-learn {
+  margin-bottom: 20px;
+}
+
+.tl-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+  line-height: 1.7;
+}
+
+.learned-section {
+  margin-top: 8px;
+}
+
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 20px;
+}
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 24px;
+  width: 100%;
+  max-width: 560px;
+  box-shadow: var(--shadow);
+}
+
+.modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.modal-word {
+  font-size: 22px;
+  font-weight: 600;
+  color: #93b4ff;
+}
+
+.modal-meaning {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-left: 10px;
+}
+
+.modal-example {
+  margin-top: 14px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.modal-example-cn {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+</style>

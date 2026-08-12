@@ -1,0 +1,35 @@
+services:
+  api:
+    build: .
+    container_name: starlit-api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://starlit:starlit_pass@db:5432/starlit
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+      - CORS_ORIGINS=${CORS_ORIGINS:-https://your-domain.com}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+
+  db:
+    image: postgres:16-alpine
+    container_name: starlit-db
+    environment:
+      - POSTGRES_USER=starlit
+      - POSTGRES_PASSWORD=starlit_pass
+      - POSTGRES_DB=starlit
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U starlit"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  pgdata:

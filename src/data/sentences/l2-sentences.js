@@ -1,0 +1,35 @@
+/**
+ * L2 社交互动 每日句子库
+ */
+export default [
+  { en: 'I am really excited about the concert this weekend.', cn: '我对这周末的音乐会真的很兴奋。' },
+  { en: 'How about going hiking with us tomorrow morning?', cn: '明天早上和我们一起去远足怎么样？' },
+  { en: 'I have a reservation for two at the restaurant.', cn: '我在餐厅预订了两人位。' },
+  { en: 'Could you recommend a good place to visit in the city?', cn: '你能推荐城里一个好玩的地方吗？' },
+  { en: 'My hobby is photography, and I take photos every weekend.', cn: '我的爱好是摄影，每个周末都拍照。' },
+  { en: 'Would you mind waiting a few minutes for the doctor?', cn: '你介意等医生几分钟吗？' },
+  { en: 'I look forward to seeing you again next month.', cn: '我期待下个月再次见到你。' },
+  { en: 'The soup is delicious but a little too spicy for me.', cn: '这个汤很好喝，但对我来说有点太辣了。' },
+  { en: 'We should keep in touch after you move to the new city.', cn: '你搬到新城市后我们也要保持联系。' },
+  { en: 'I feel nervous before making a speech in public.', cn: '在公开演讲前我感到紧张。' },
+  { en: 'She is proud of her son because he won the first prize.', cn: '她为儿子感到自豪，因为他得了一等奖。' },
+  { en: 'Could I see the menu, please? I am ready to order.', cn: '请给我看一下菜单好吗？我准备好点餐了。' },
+  { en: 'I exercise three times a week to keep healthy.', cn: '我每周锻炼三次来保持健康。' },
+  { en: 'He was surprised by the gift from his friends.', cn: '他对朋友送的礼物感到惊讶。' },
+  { en: 'Let us meet at the library at three this afternoon.', cn: '我们今天下午三点在图书馆见面吧。' },
+  { en: 'The museum is free to visit on Mondays.', cn: '博物馆周一免费参观。' },
+  { en: 'I am tired after the long trip, so I will sleep early.', cn: '长途旅行后我很累，所以会早睡。' },
+  { en: 'Do not worry, everything will be fine in the end.', cn: '别担心，一切最终都会好的。' },
+  { en: 'We checked in at the hotel and then went downtown.', cn: '我们在酒店办理入住后去了市中心。' },
+  { en: 'She invited me to her birthday party next Friday.', cn: '她邀请我下周五参加她的生日派对。' },
+  { en: 'I feel relaxed when I listen to music by the sea.', cn: '在海边听音乐时我感到放松。' },
+  { en: 'Could you say that again, please? I did not catch it.', cn: '请你再说一遍好吗？我没听清。' },
+  { en: 'My neighbor is very friendly and always helps me.', cn: '我的邻居很友好，总是帮助我。' },
+  { en: 'We took a trip to the mountains last weekend.', cn: '我们上周末去山里旅行了。' },
+  { en: 'The bill, please, and could I have the receipt?', cn: '请结账，能给我小票吗？' },
+  { en: 'I am in a hurry now, can we talk about it later?', cn: '我现在赶时间，能晚点再谈吗？' },
+  { en: 'Reading is a good habit, especially before sleep.', cn: '阅读是个好习惯，尤其是睡前。' },
+  { en: 'The doctor said I should rest and drink more water.', cn: '医生说我应该休息并多喝水。' },
+  { en: 'Which direction is the nearest subway station?', cn: '最近的地铁站在哪个方向？' },
+  { en: 'I ride my bicycle to work when the weather is nice.', cn: '天气好时我骑自行车上班。' }
+]
