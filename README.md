@@ -208,6 +208,25 @@ docker compose up -d --build          # 自动建表 + 导入内容 + 启动 API
 
 ---
 
+## 🐛 已修复 Bug 清单
+
+> 2026-08-12 集中联调期发现并修复的问题，留档备查。
+
+| 问题 | 根因 | 修复 |
+|:---|:---|:---|
+| 学习规划视图每天内容完全相同 | `generatePlanRange` 未按日期差平移内容指针，所有日期从同一位置切片 | 以"今天"为基准按天数差平移四模块指针 |
+| 规划视图单词/短语为空 | 数据键是复数 `words/phrases`，调用方传单数 `word/phrase` 映射失败 | `getItemsByType` 增加单复数映射 `TYPE_KEY_MAP` |
+| 学满一级后计划变空 | `contentIndex` 为跨等级累积指针，却在单等级列表内切片；等级推进逻辑未被调用 | 计划改从跨等级合并列表取内容（L1→L5 连续流），等级自动同步 |
+| 记忆曲线图右侧文字截断（如"第30天/09/17"） | SVG 左右边距只有 10px，最右节点文字超出 viewBox 被裁剪 | 边距 10px → 24px |
+| 误点亮后无法取消打卡 | 缺少 `unCheckIn`，已完成节点按钮被 `disabled` | 新增 `unCheckIn` 全链路；曲线节点点击可取消，今日面板加"取消"链接 |
+| 对话练习 AI 回复为空（空气泡） | DeepSeek v4 为推理模型，`max_tokens` 不足时思考占满 token、`content` 为空 | `max_tokens` 统一提至 20 万（仅上限，按实际输出计费）；`content` 为空自动重试一次 |
+| 对话练习 AI 复读开场白/用户发言 | 前端用户消息在 `history` 与 `user_text` 双传；后端开场白从 `scenario` 与 `history` 双塞 | 前端 `sendTurn` 传 `slice(0,-1)`；后端仅当 `history` 为空时兜底开场白 |
+| `[REPLY]/[HINT]` 解析残留标记 | 无 `[HINT]` 时 `[REPLY]` 标记未剥离（单测发现） | `parse_reply_hint` 统一先剥 `[HINT]` 再剥 `[REPLY]` |
+| 后端本地启动报错（开发期） | passlib 1.7.4 与 bcrypt 4.x 不兼容；Python 3.13 下 pydantic-core 需 Rust 编译 | 改用 bcrypt 官方库；升级 pydantic 至 3.13 兼容版本 |
+| 同步快照返回数字 id 而非 item_key | snapshot 接口映射错误 | 修复 item_key 映射 |
+
+---
+
 ## 🤝 贡献
 
 欢迎提 Issue 与 PR。内容库（单词/短语/语法/实用知识）均以纯数据文件存放在 `src/data/`，新增或修正内容无需改动逻辑代码，导出后通过迁移脚本入库即可。

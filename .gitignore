@@ -19,5 +19,9 @@ backend/data/*.json
 .vscode/
 .DS_Store
 
+# 测试缓存
+.pytest_cache/
+backend/tests/__pycache__/
+
 # 工作区内部数据（记忆日志等，不对外）
 .workbuddy/

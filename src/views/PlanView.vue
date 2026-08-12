@@ -5,7 +5,10 @@
         <h1 class="page-title">学习规划</h1>
         <p class="page-desc">时间线视图 · 过去 / 今天 / 未来 30 天每日安排</p>
       </div>
-      <button class="btn btn-outline btn-sm" @click="scrollToToday">回到今天</button>
+      <div class="header-actions">
+        <router-link to="/practice" class="btn btn-outline btn-sm">🎙️ 对话练习</router-link>
+        <button class="btn btn-outline btn-sm" @click="scrollToToday">回到今天</button>
+      </div>
     </div>
 
     <!-- 概览统计 -->
@@ -89,6 +92,11 @@ onMounted(() => {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 18px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
 }
 
 .page-title {

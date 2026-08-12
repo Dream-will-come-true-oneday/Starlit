@@ -14,6 +14,11 @@ class Settings(BaseSettings):
     # CORS：前端地址
     CORS_ORIGINS: str = "http://localhost:5173,http://localhost:4173"
 
+    # DeepSeek LLM（每日对话练习：场景生成 / 对话 / 报告）
+    DEEPSEEK_API_KEY: str = ""
+    DEEPSEEK_BASE_URL: str = "https://api.deepseek.com"
+    DEEPSEEK_MODEL: str = "deepseek-v4-flash"
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

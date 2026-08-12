@@ -117,5 +117,30 @@ class DailyPlanOut(BaseModel):
     completion: Dict[str, int]
 
 
+# ---------- 每日对话练习 ----------
+class PracticeItem(BaseModel):
+    type: str = ""                 # word | phrase | grammar | extra
+    content: str = ""              # 英文内容
+    meaning: str = ""              # 中文释义
+
+
+class ScenarioRequest(BaseModel):
+    items: List[PracticeItem] = []
+    sentence: str = ""             # 每日句子（英文）
+    level: int = 1
+
+
+class TurnRequest(BaseModel):
+    scenario: Dict[str, Any]
+    history: List[Dict[str, str]] = []   # [{role: user|assistant, content}]
+    user_text: str
+
+
+class ReportRequest(BaseModel):
+    scenario: Dict[str, Any]
+    history: List[Dict[str, str]] = []
+    target_items: List[str] = []
+
+
 # 提前解析 UserOut 引用
 TokenResponse.model_rebuild()

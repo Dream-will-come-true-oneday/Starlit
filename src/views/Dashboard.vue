@@ -37,6 +37,7 @@
           <router-link :to="'/grammar'" class="btn btn-outline btn-sm">语法</router-link>
           <router-link :to="'/extra'" class="btn btn-outline btn-sm">其他</router-link>
         </div>
+        <router-link to="/practice" class="practice-entry">🎙️ 用今天学的内容，和 AI 对话练习 →</router-link>
       </div>
 
       <!-- 今日复盘 -->
@@ -371,6 +372,23 @@ onMounted(() => {
   gap: 8px;
   margin-top: 14px;
   flex-wrap: wrap;
+}
+
+.practice-entry {
+  display: block;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(91, 140, 255, 0.08);
+  border: 1px dashed rgba(91, 140, 255, 0.45);
+  color: #93b4ff;
+  font-size: 13px;
+  text-align: center;
+  transition: all 0.2s;
+}
+.practice-entry:hover {
+  background: rgba(91, 140, 255, 0.16);
+  border-style: solid;
 }
 
 .review-list {

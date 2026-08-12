@@ -43,6 +43,12 @@ const routes = [
     name: 'review',
     component: () => import('../views/ReviewCenter.vue'),
     meta: { title: '复盘中心' }
+  },
+  {
+    path: '/practice',
+    name: 'practice',
+    component: () => import('../views/Practice.vue'),
+    meta: { title: '对话练习' }
   }
 ]
 

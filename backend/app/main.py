@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
 from .database import Base, engine
-from .routers import auth, items, progress, reviews, plans
+from .routers import auth, items, progress, reviews, plans, practice
 
 # 创建数据表（生产建议用 Alembic 迁移，MVP 直接建表）
 Base.metadata.create_all(bind=engine)
@@ -30,6 +30,7 @@ app.include_router(items.router)
 app.include_router(progress.router)
 app.include_router(reviews.router)
 app.include_router(plans.router)
+app.include_router(practice.router)
 
 
 @app.get("/api/health")

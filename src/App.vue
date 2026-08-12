@@ -4,7 +4,7 @@ import { useProgressStore } from './stores/progressStore'
 
 const progress = useProgressStore()
 
-// 顶部导航：今日 / 规划 / 单词 / 短语 / 语法 / 其他 / 复盘
+// 顶部导航：今日 / 规划 / 单词 / 短语 / 语法 / 其他 / 复盘 / 练习
 const navs = [
   { path: '/', label: '今日' },
   { path: '/plan', label: '规划' },
@@ -12,7 +12,8 @@ const navs = [
   { path: '/phrases', label: '短语' },
   { path: '/grammar', label: '语法' },
   { path: '/extra', label: '其他' },
-  { path: '/review', label: '复盘' }
+  { path: '/review', label: '复盘' },
+  { path: '/practice', label: '练习' }
 ]
 
 // 今日是否有待复习项（红点提示）
