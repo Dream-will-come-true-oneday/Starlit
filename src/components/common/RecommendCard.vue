@@ -42,8 +42,8 @@ const typeClass = computed(() => (props.recommend ? (TYPE_MAP[props.recommend.ty
   gap: 10px;
   padding: 10px 12px;
   border-radius: var(--radius-sm);
-  background: rgba(139, 92, 246, 0.08);
-  border: 1px dashed rgba(139, 92, 246, 0.35);
+  background: rgba(102, 227, 210, 0.06);
+  border: 1px dashed rgba(102, 227, 210, 0.34);
   margin-top: 10px;
 }
 
@@ -56,9 +56,9 @@ const typeClass = computed(() => (props.recommend ? (TYPE_MAP[props.recommend.ty
   font-weight: 600;
 }
 
-.rc-podcast { background: rgba(52, 211, 153, 0.15); color: #6ee7b7; }
-.rc-video { background: rgba(91, 140, 255, 0.15); color: #93b4ff; }
-.rc-reading { background: rgba(245, 158, 11, 0.15); color: #fcd34d; }
+.rc-podcast { background: rgba(102, 227, 210, 0.14); color: var(--phrase); }
+.rc-video { background: rgba(100, 181, 255, 0.14); color: var(--word); }
+.rc-reading { background: rgba(243, 181, 98, 0.14); color: var(--grammar); }
 .rc-channel { background: rgba(236, 72, 153, 0.15); color: #f9a8d4; }
 
 .rc-body {
@@ -83,7 +83,7 @@ const typeClass = computed(() => (props.recommend ? (TYPE_MAP[props.recommend.ty
   display: inline-block;
   margin-top: 6px;
   font-size: 12px;
-  color: #c4b5fd;
+  color: var(--accent);
   font-weight: 500;
 }
 

@@ -18,7 +18,7 @@ defineProps({
 <style scoped>
 .phrase-card {
   background: var(--bg-card);
-  border: 1px solid rgba(52, 211, 153, 0.35);
+  border: 1px solid rgba(102, 227, 210, 0.38);
   border-radius: var(--radius);
   padding: 26px 24px;
   min-height: 150px;
@@ -38,7 +38,7 @@ defineProps({
 .pc-content {
   font-size: 24px;
   font-weight: 600;
-  color: #6ee7b7;
+  color: var(--phrase);
 }
 
 .pc-meaning {

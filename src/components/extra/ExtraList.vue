@@ -1,6 +1,6 @@
 <template>
   <div class="extra-list">
-    <div v-for="item in items" :key="item.id" class="extra-row" @click="$emit('select', item)">
+    <div v-for="item in items" :key="item.id" class="extra-row" role="button" tabindex="0" :aria-label="`查看 ${item.content} 的记忆曲线`" @click="$emit('select', item)" @keydown.enter.prevent="$emit('select', item)" @keydown.space.prevent="$emit('select', item)">
       <div class="er-main">
         <span class="er-content">{{ item.content }}</span>
         <span class="er-meaning">{{ item.meaning }}</span>
@@ -61,7 +61,7 @@ defineEmits(['select'])
 .er-content {
   font-size: 15px;
   font-weight: 600;
-  color: #c4b5fd;
+  color: var(--accent);
 }
 
 .er-meaning {

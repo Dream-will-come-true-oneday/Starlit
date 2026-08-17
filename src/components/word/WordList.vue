@@ -1,6 +1,6 @@
 <template>
   <div class="word-list">
-    <div v-for="item in items" :key="item.id" class="word-row" @click="$emit('select', item)">
+    <div v-for="item in items" :key="item.id" class="word-row" role="button" tabindex="0" :aria-label="`查看 ${item.content} 的记忆曲线`" @click="$emit('select', item)" @keydown.enter.prevent="$emit('select', item)" @keydown.space.prevent="$emit('select', item)">
       <div class="wr-main">
         <span class="wr-word">{{ item.content }}</span>
         <span class="wr-phonetic">{{ item.phonetic }}</span>
@@ -60,7 +60,7 @@ defineEmits(['select'])
 .wr-word {
   font-size: 16px;
   font-weight: 600;
-  color: #93b4ff;
+  color: var(--word);
 }
 
 .wr-phonetic {

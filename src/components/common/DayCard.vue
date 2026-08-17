@@ -1,7 +1,16 @@
 <template>
   <div class="day-card" :class="`day-${plan.dayStatus}`">
     <!-- 卡片头 -->
-    <div class="dc-head" @click="expanded = !expanded">
+    <div
+      class="dc-head"
+      role="button"
+      tabindex="0"
+      :aria-expanded="expanded"
+      :aria-label="`${plan.date} 学习安排`"
+      @click="expanded = !expanded"
+      @keydown.enter.prevent="expanded = !expanded"
+      @keydown.space.prevent="expanded = !expanded"
+    >
       <div class="dc-date">
         <div class="dc-day">{{ dayNum }}</div>
         <div class="dc-meta">
@@ -30,21 +39,21 @@
         </div>
       </div>
 
-      <span class="dc-arrow" :class="{ open: expanded }">▾</span>
+      <span class="dc-arrow" :class="{ open: expanded }"><AppIcon name="chevronDown" :size="17" /></span>
     </div>
 
     <!-- 展开详情 -->
     <div v-show="expanded" class="dc-body">
       <!-- 每日句子 -->
       <div v-if="plan.newItems.sentence.en" class="dc-sentence">
-        <div class="dc-section-label">📌 每日句子</div>
+        <div class="dc-section-label"><AppIcon name="languages" :size="14" /> 每日句子</div>
         <div class="dc-sentence-en">{{ plan.newItems.sentence.en }}</div>
         <div class="dc-sentence-cn">{{ plan.newItems.sentence.cn }}</div>
       </div>
 
       <!-- 新学内容（四模块） -->
       <div v-if="hasNewItems" class="dc-new">
-        <div class="dc-section-label">📚 今日新学</div>
+        <div class="dc-section-label"><AppIcon name="book" :size="14" /> 今日新学</div>
         <div class="dc-new-grid">
           <div v-for="item in newItemsFlat" :key="item.id" class="dc-item">
             <span class="dc-type-dot" :class="`type-${item.type}`"></span>
@@ -56,7 +65,7 @@
 
       <!-- 复盘项 -->
       <div v-if="plan.reviewItems.length" class="dc-review">
-        <div class="dc-section-label">🔁 今日复盘（{{ plan.reviewItems.length }}）</div>
+        <div class="dc-section-label"><AppIcon name="refresh" :size="14" /> 今日复盘（{{ plan.reviewItems.length }}）</div>
         <div class="dc-review-list">
           <div v-for="(r, i) in plan.reviewItems" :key="i" class="dc-review-item">
             <span class="dc-type-dot" :class="`type-${r.type}`"></span>
@@ -78,6 +87,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { getItemById } from '../../data/index.js'
+import AppIcon from './AppIcon.vue'
 
 const props = defineProps({
   plan: { type: Object, required: true },
@@ -145,6 +155,11 @@ function reviewContent(r) {
 
 .dc-head:hover {
   background: var(--bg-hover);
+}
+
+.dc-head:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
 }
 
 .dc-date {
@@ -216,6 +231,7 @@ function reviewContent(r) {
 }
 
 .dc-arrow {
+  display: inline-flex;
   color: var(--text-muted);
   transition: transform 0.2s;
   font-size: 14px;
@@ -232,6 +248,9 @@ function reviewContent(r) {
 }
 
 .dc-section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12px;
   font-weight: 600;
   color: var(--text-secondary);
@@ -239,7 +258,7 @@ function reviewContent(r) {
 }
 
 .dc-sentence {
-  background: rgba(139, 92, 246, 0.08);
+  background: rgba(100, 181, 255, 0.08);
   border-left: 3px solid var(--accent);
   padding: 10px 14px;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;

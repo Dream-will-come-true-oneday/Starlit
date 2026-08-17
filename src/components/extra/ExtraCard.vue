@@ -40,7 +40,7 @@ defineProps({
 <style scoped>
 .extra-card {
   background: var(--bg-card);
-  border: 1px solid rgba(139, 92, 246, 0.4);
+  border: 1px solid rgba(183, 243, 107, 0.36);
   border-radius: var(--radius);
   padding: 24px;
 }
@@ -48,7 +48,7 @@ defineProps({
 .ec-title {
   font-size: 22px;
   font-weight: 600;
-  color: #c4b5fd;
+  color: var(--accent);
 }
 
 .ec-meaning {
@@ -72,8 +72,8 @@ defineProps({
 .ec-structure code {
   font-family: 'SF Mono', Consolas, monospace;
   font-size: 13px;
-  color: #93b4ff;
-  background: rgba(91, 140, 255, 0.1);
+  color: var(--word);
+  background: rgba(100, 181, 255, 0.1);
   padding: 3px 8px;
   border-radius: 6px;
   margin-left: 6px;
@@ -101,14 +101,14 @@ defineProps({
 .ec-tips {
   margin-top: 14px;
   padding: 10px 14px;
-  background: rgba(139, 92, 246, 0.07);
+  background: rgba(183, 243, 107, 0.06);
   border-radius: var(--radius-sm);
 }
 
 .ec-tips-title {
   font-size: 12px;
   font-weight: 600;
-  color: #c4b5fd;
+  color: var(--accent);
   margin-bottom: 6px;
 }
 

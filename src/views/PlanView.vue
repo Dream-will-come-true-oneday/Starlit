@@ -6,8 +6,8 @@
         <p class="page-desc">时间线视图 · 过去 / 今天 / 未来 30 天每日安排</p>
       </div>
       <div class="header-actions">
-        <router-link to="/practice" class="btn btn-outline btn-sm">🎙️ 对话练习</router-link>
-        <button class="btn btn-outline btn-sm" @click="scrollToToday">回到今天</button>
+        <router-link to="/practice" class="btn btn-outline btn-sm"><AppIcon name="mic" :size="14" /> 对话练习</router-link>
+        <button class="btn btn-outline btn-sm" @click="scrollToToday"><AppIcon name="target" :size="14" /> 回到今天</button>
       </div>
     </div>
 
@@ -35,7 +35,7 @@
     </div>
 
     <div v-if="!timelinePlans.length" class="empty">
-      <div class="empty-icon">🗓️</div>
+      <div class="empty-icon"><AppIcon name="calendar" :size="30" /></div>
       <p>时间线加载中或为空</p>
     </div>
   </div>
@@ -44,6 +44,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
 import DayCard from '../components/common/DayCard.vue'
+import AppIcon from '../components/common/AppIcon.vue'
 import { usePlanStore } from '../stores/planStore.js'
 import { useProgressStore } from '../stores/progressStore.js'
 import { today } from '../utils/date.js'
@@ -117,6 +118,19 @@ onMounted(() => {
 .stat-card {
   text-align: center;
   padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 14px;
+  left: 14px;
+  height: 2px;
+  background: var(--accent);
+  opacity: 0.6;
 }
 
 .stat-num {
@@ -135,5 +149,35 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   scroll-margin-top: 80px;
+  position: relative;
+}
+
+.timeline-item {
+  scroll-margin-top: 88px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 38px;
+  width: 1px;
+  background: rgba(102, 227, 210, 0.18);
+  pointer-events: none;
+}
+
+.header-actions .btn {
+  gap: 6px;
+}
+
+@media (max-width: 600px) {
+  .module-header {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .header-actions { flex-shrink: 0; }
+  .header-actions .btn { padding-inline: 10px; }
 }
 </style>

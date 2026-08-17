@@ -17,9 +17,9 @@ const levelName = computed(() => LEVEL_NAMES[props.level] || `L${props.level}`)
 </script>
 
 <style scoped>
-.lv-1 { background: rgba(52, 211, 153, 0.14); color: #6ee7b7; }
-.lv-2 { background: rgba(91, 140, 255, 0.14); color: #93b4ff; }
-.lv-3 { background: rgba(245, 158, 11, 0.14); color: #fcd34d; }
-.lv-4 { background: rgba(216, 90, 48, 0.14); color: #f0997b; }
-.lv-5 { background: rgba(139, 92, 246, 0.16); color: #c4b5fd; }
+.lv-1 { background: rgba(102, 227, 210, 0.12); color: var(--phrase); }
+.lv-2 { background: rgba(100, 181, 255, 0.12); color: var(--word); }
+.lv-3 { background: rgba(243, 181, 98, 0.12); color: var(--grammar); }
+.lv-4 { background: rgba(255, 130, 120, 0.12); color: var(--missed); }
+.lv-5 { background: rgba(183, 243, 107, 0.12); color: var(--accent); }
 </style>

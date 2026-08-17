@@ -20,10 +20,10 @@
         @click="selectLevel(lv)"
       >
         L{{ lv }} · {{ LEVEL_NAMES[lv] }}
-        <span v-if="lv > unlockedLevel" class="lock">🔒</span>
+        <span v-if="lv > unlockedLevel" class="lock"><AppIcon name="archive" :size="13" /></span>
       </button>
     </div>
-    <p v-if="unlockedLevel < 5" class="level-tip">🔒 点击锁定等级可从该难度开始学习（跳过前面内容，已学保留）</p>
+    <p v-if="unlockedLevel < 5" class="level-tip"><AppIcon name="archive" :size="13" /> 点击锁定等级可从该难度开始学习（跳过前面内容，已学保留）</p>
 
     <LearnSession ref="sessionRef" :card-component="GrammarCard" @complete="onComplete" />
 
@@ -37,7 +37,7 @@
       </p>
       <p v-else class="tl-desc">今天的语法点已全部学完，明天继续！</p>
       <button v-if="pendingItems.length > 0" class="btn btn-primary" @click="startLearn">
-        开始学习 →
+        开始学习 <AppIcon name="play" :size="14" />
       </button>
     </section>
 
@@ -45,7 +45,7 @@
       <h2 class="section-title"><span class="bar"></span>我的语法（点击查看记忆曲线）</h2>
       <GrammarList :items="learnedItems" :progress-map="progressMap" @select="selectedItem = $event" />
       <div v-if="!learnedItems.length" class="empty">
-        <div class="empty-icon">📐</div>
+        <div class="empty-icon"><AppIcon name="braces" :size="30" /></div>
         <p>这个等级还没有学习记录，先学一个语法点吧</p>
       </div>
     </section>
@@ -57,7 +57,7 @@
             <span class="modal-word">{{ selectedItem.content }}</span>
             <span class="modal-meaning">{{ selectedItem.meaning }}</span>
           </div>
-          <button class="btn-ghost" @click="selectedItem = null">✕</button>
+          <button class="btn-ghost" aria-label="关闭记忆曲线" @click="selectedItem = null"><AppIcon name="close" :size="18" /></button>
         </div>
         <div class="modal-structure">
           <span class="badge badge-grammar">结构</span>
@@ -77,6 +77,7 @@ import GrammarCard from '../components/grammar/GrammarCard.vue'
 import GrammarList from '../components/grammar/GrammarList.vue'
 import LearnSession from '../components/common/LearnSession.vue'
 import MemoryCurveChart from '../components/common/MemoryCurveChart.vue'
+import AppIcon from '../components/common/AppIcon.vue'
 import { useProgressStore } from '../stores/progressStore.js'
 import { usePlanStore } from '../stores/planStore.js'
 import { useModuleStore } from '../stores/moduleStore.js'
@@ -204,7 +205,7 @@ function onComplete(items) {
 .level-tab.active {
   background: rgba(245, 158, 11, 0.15);
   border-color: var(--grammar);
-  color: #fcd34d;
+  color: var(--grammar);
 }
 
 .level-tab.locked {
@@ -269,7 +270,7 @@ function onComplete(items) {
 .modal-word {
   font-size: 20px;
   font-weight: 600;
-  color: #fcd34d;
+  color: var(--grammar);
 }
 
 .modal-meaning {
@@ -285,7 +286,7 @@ function onComplete(items) {
 .modal-structure code {
   font-family: 'SF Mono', Consolas, monospace;
   font-size: 13px;
-  color: #93b4ff;
+  color: var(--word);
   background: rgba(91, 140, 255, 0.1);
   padding: 3px 8px;
   border-radius: 6px;

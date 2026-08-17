@@ -1,5 +1,15 @@
 <template>
-  <div class="flip-card" :class="{ flipped }" @click="flip">
+  <div
+    class="flip-card"
+    :class="{ flipped }"
+    role="button"
+    tabindex="0"
+    :aria-pressed="flipped"
+    :aria-label="`${item.content}，翻转查看释义`"
+    @click="flip"
+    @keydown.enter.prevent="flip"
+    @keydown.space.prevent="flip"
+  >
     <div class="flip-inner">
       <!-- 正面：英文 -->
       <div class="flip-face flip-front">
@@ -70,14 +80,16 @@ function flip() {
 }
 
 .flip-front {
-  background: linear-gradient(160deg, rgba(91, 140, 255, 0.12), var(--bg-card) 60%);
-  border-color: rgba(91, 140, 255, 0.4);
+  background: var(--bg-card);
+  border-color: rgba(100, 181, 255, 0.42);
+  box-shadow: inset 0 2px 0 rgba(100, 181, 255, 0.32);
 }
 
 .flip-back {
   transform: rotateY(180deg);
-  background: linear-gradient(160deg, rgba(52, 211, 153, 0.1), var(--bg-card) 60%);
-  border-color: rgba(52, 211, 153, 0.4);
+  background: var(--bg-card);
+  border-color: rgba(102, 227, 210, 0.42);
+  box-shadow: inset 0 2px 0 rgba(102, 227, 210, 0.32);
 }
 
 .fc-phonetic {
@@ -89,8 +101,8 @@ function flip() {
 .fc-word {
   font-size: 34px;
   font-weight: 600;
-  color: #fff;
-  letter-spacing: 1px;
+  color: var(--text);
+  letter-spacing: 0;
   word-break: break-all;
 }
 
@@ -103,7 +115,7 @@ function flip() {
 .bc-meaning {
   font-size: 26px;
   font-weight: 600;
-  color: #6ee7b7;
+  color: var(--phrase);
   margin-bottom: 14px;
 }
 
@@ -124,4 +136,6 @@ function flip() {
   font-size: 12px;
   color: var(--text-muted);
 }
+
+.flip-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 </style>

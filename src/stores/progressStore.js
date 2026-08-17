@@ -7,7 +7,7 @@ import { defineStore } from 'pinia'
 import { storage } from '../repositories/storage.js'
 import dayjs from 'dayjs'
 import { generateReviewSchedule, checkIn, unCheckIn, markMissedReviews, getTodayPendingReviews } from '../composables/useMemoryCurve.js'
-import { levelStartIndex, levelOfIndex } from '../data/index.js'
+import { getItemsByType, levelStartIndex, levelOfIndex } from '../data/index.js'
 
 const STORAGE_KEY = 'appData'
 const VERSION = '2.0.0'
@@ -182,8 +182,9 @@ export const useProgressStore = defineStore('progress', {
     },
 
     /**
-     * 自选难度：把某模块的内容指针跳到指定等级起点（只进不退）
-     * 用于"词汇量 3500 但语法生疏"这类分模块独立起点的场景
+     * 自选难度：把某模块的内容指针定位到指定等级的第一个未学项
+     * 用于"词汇量 3500 但语法生疏"这类分模块独立起点的场景。
+     * 回退等级不会删除已学记录或复盘记录。
      * @param {string} type word | phrase | grammar | extra
      * @param {number} level 1-5
      */
@@ -191,11 +192,20 @@ export const useProgressStore = defineStore('progress', {
       const key = TYPE_KEYS.includes(type) ? type : 'word'
       const target = Math.min(5, Math.max(1, level))
       const start = levelStartIndex(key, target)
-      if (this.data.contentIndex[key] < start) {
-        this.data.contentIndex[key] = start
+      const levelItems = getItemsByType(key, target)
+      const learnedIds = new Set(
+        this.data.progress
+          .filter((item) => item.type === key)
+          .map((item) => item.itemId)
+      )
+      const firstUnlearned = levelItems.findIndex((item) => !learnedIds.has(item.id))
+      const nextIndex = firstUnlearned === -1 ? start + levelItems.length : start + firstUnlearned
+
+      if (this.data.contentIndex[key] !== nextIndex) {
+        this.data.contentIndex[key] = nextIndex
         this.persist()
       }
-      return this.moduleLevel(key)
+      return target
     },
 
     /** 导出全部数据（JSON 备份） */

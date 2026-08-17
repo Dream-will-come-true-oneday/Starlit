@@ -2,7 +2,7 @@
   <div class="practice-page">
     <div class="module-header">
       <div>
-        <h1 class="page-title">🎙️ 每日对话练习</h1>
+        <h1 class="page-title"><AppIcon name="mic" :size="22" /> 每日对话练习</h1>
         <p class="page-desc">围绕今天学的内容，和 AI 来一段真实对话 · 结束后自动出报告（不保存历史）</p>
       </div>
       <span class="badge" :class="apiReady ? 'badge-lit' : 'badge-missed'">{{ apiReady ? 'AI 已就绪' : '未配置 AI' }}</span>
@@ -10,7 +10,7 @@
 
     <!-- 空闲：开始前 -->
     <section v-if="phase === 'idle'" class="card fade-in">
-      <div class="card-title"><span>📚 今天的学习内容</span></div>
+      <div class="card-title"><span class="title-with-icon"><AppIcon name="book" :size="16" /> 今天的学习内容</span></div>
       <div class="tl-desc">
         <template v-if="todayItems.length">
           单词：{{ todayItems.filter((i) => i.type === 'word').map((i) => i.content).join(' · ') }}<br />
@@ -24,19 +24,19 @@
       <p v-if="!speechOk" class="warn-text">⚠ 当前浏览器不支持语音识别（建议用 Chrome / Edge），将使用文字输入对话。</p>
       <p v-if="!apiReady" class="warn-text">⚠ 后端未配置 DEEPSEEK_API_KEY，请先在 backend/.env 填写后再开始。</p>
       <button class="btn btn-primary" :disabled="!apiReady || loading" @click="startPractice">
-        {{ loading ? '生成场景中…' : '🎙️ 开始练习' }}
+        <AppIcon :name="loading ? 'activity' : 'mic'" :size="15" /> {{ loading ? '生成场景中…' : '开始练习' }}
       </button>
     </section>
 
     <!-- 场景卡片 -->
     <section v-if="scenario" class="card scenario-card fade-in">
-      <div class="card-title"><span>🏠 {{ scenario.title }}</span></div>
+      <div class="card-title"><span class="title-with-icon"><AppIcon name="target" :size="16" /> {{ scenario.title }}</span></div>
       <p class="sc-setting">{{ scenario.setting }}</p>
       <div class="sc-role"><span class="badge">你 vs {{ scenario.role }}</span><span class="badge badge-pending">目标：{{ scenario.goal }}</span></div>
       <div v-if="scenario.tips?.length" class="sc-tips">
         <span v-for="t in scenario.tips" :key="t" class="tip-chip">{{ t }}</span>
       </div>
-      <button v-if="phase === 'talking'" class="btn btn-outline btn-sm" @click="endPractice">结束并生成报告 →</button>
+      <button v-if="phase === 'talking'" class="btn btn-outline btn-sm" @click="endPractice">结束并生成报告 <AppIcon name="arrowRight" :size="14" /></button>
     </section>
 
     <!-- 对话区 -->
@@ -45,12 +45,12 @@
         <div v-for="(m, i) in history" :key="i" class="msg" :class="m.role === 'user' ? 'msg-user' : 'msg-ai'">
           <div class="msg-bubble">
             {{ m.content }}
-            <span v-if="m.role === 'assistant' && speakingIndex === i" class="speak-dot">🔊</span>
+            <span v-if="m.role === 'assistant' && speakingIndex === i" class="speak-dot"><AppIcon name="activity" :size="12" /></span>
           </div>
           <div v-if="m.role === 'assistant'" class="msg-actions">
-            <button class="mini-btn" @click="replay(i)">🔊 重听</button>
+            <button class="mini-btn" aria-label="重听 AI 回复" @click="replay(i)"><AppIcon name="activity" :size="12" /> 重听</button>
           </div>
-          <div v-if="m.role === 'assistant' && m.hint" class="msg-hint">💡 {{ m.hint }}</div>
+          <div v-if="m.role === 'assistant' && m.hint" class="msg-hint"><AppIcon name="help" :size="13" /> {{ m.hint }}</div>
         </div>
         <!-- 实时语音转写气泡（录音中显示） -->
         <div v-if="listening" class="msg msg-user">
@@ -72,7 +72,8 @@
           @click="toggleMic"
           :disabled="waiting || speaking"
         >
-          {{ speaking ? '🔊 AI 正在说话…' : listening ? '⏹️ 说完停止' : '🎤 开始说话' }}
+          <AppIcon :name="speaking ? 'activity' : 'mic'" :size="15" />
+          {{ speaking ? 'AI 正在说话…' : listening ? '说完停止' : '开始说话' }}
         </button>
         <input
           v-model="textInput"
@@ -81,16 +82,16 @@
           :disabled="listening || waiting"
           @keyup.enter="sendText"
         />
-        <button class="btn btn-primary btn-sm" :disabled="waiting || !textInput.trim()" @click="sendText">发送</button>
+        <button class="btn btn-primary btn-sm" :disabled="waiting || !textInput.trim()" @click="sendText">发送 <AppIcon name="arrowRight" :size="14" /></button>
       </div>
-      <p v-if="listening" class="live-hint">🔴 录音中 · 再次点按钮可手动发送（或静音后自动发送）</p>
+      <p v-if="listening" class="live-hint"><AppIcon name="activity" :size="13" /> 录音中 · 再次点按钮可手动发送（或静音后自动发送）</p>
 
       <div class="turn-hint">对话轮次 {{ userTurns }} / {{ MAX_TURNS }} · 说够或不想说了随时「结束并生成报告」</div>
     </section>
 
     <!-- 报告 -->
     <section v-if="report" class="card report-card fade-in">
-      <div class="card-title"><span>📊 你的练习报告</span><span class="badge badge-lit">综合 {{ report.scores?.overall ?? '-' }} 分</span></div>
+      <div class="card-title"><span class="title-with-icon"><AppIcon name="bars" :size="16" /> 你的练习报告</span><span class="badge badge-lit">综合 {{ report.scores?.overall ?? '-' }} 分</span></div>
 
       <div class="score-grid">
         <div v-for="s in scoreList" :key="s.key" class="score-item">
@@ -124,10 +125,10 @@
       <h3 class="rep-title">学习建议</h3>
       <ul class="rep-list"><li v-for="(sg, i) in report.suggestions || []" :key="i">{{ sg }}</li></ul>
 
-      <h3 class="rep-title">📖 本次练习解析（怎么提问 / 怎么回复）</h3>
+      <h3 class="rep-title"><AppIcon name="languages" :size="15" /> 本次练习解析（怎么提问 / 怎么回复）</h3>
       <p class="rep-analysis">{{ report.analysis || '（暂无解析）' }}</p>
 
-      <h3 class="rep-title">💬 对话改进示范</h3>
+      <h3 class="rep-title"><AppIcon name="chat" :size="15" /> 对话改进示范</h3>
       <div v-if="(report.example_exchanges || []).length" class="exchange-list">
         <div v-for="(ex, i) in report.example_exchanges" :key="i" class="exchange-item">
           <div class="ex-row"><span class="ex-tag ex-tag-ai">AI</span>{{ ex.ai }}</div>
@@ -141,8 +142,8 @@
       <p v-else class="rep-empty">（暂无示范，多聊几轮会更全面）</p>
 
       <div class="report-actions">
-        <button class="btn btn-outline btn-sm" @click="copyReport">📋 复制报告</button>
-        <button class="btn btn-primary btn-sm" @click="resetAll">再练一次</button>
+        <button class="btn btn-outline btn-sm" @click="copyReport"><AppIcon name="save" :size="14" /> 复制报告</button>
+        <button class="btn btn-primary btn-sm" @click="resetAll"><AppIcon name="refresh" :size="14" /> 再练一次</button>
       </div>
     </section>
 
@@ -156,6 +157,7 @@ import { generateScenario, sendTurn, generateReport } from '../api/practice.js'
 import { useVoiceChat, isSpeechSupported } from '../composables/useVoiceChat.js'
 import { usePlanStore } from '../stores/planStore.js'
 import { useProgressStore } from '../stores/progressStore.js'
+import AppIcon from '../components/common/AppIcon.vue'
 
 const MAX_TURNS = 8
 
@@ -384,6 +386,14 @@ function resetAll() {
   margin-bottom: 18px;
 }
 .page-title { font-size: 24px; font-weight: 700; }
+.page-title,
+.title-with-icon,
+.mini-btn,
+.mic-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
 .page-desc { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
 .tl-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 12px; }
 .tl-sentence { font-size: 14px; color: var(--accent); margin-bottom: 16px; }
@@ -420,7 +430,20 @@ function resetAll() {
 .mini-btn { font-size: 11px; color: var(--text-muted); background: none; border: none; cursor: pointer; }
 .mini-btn:hover { color: var(--text); }
 
-.chat-controls { display: flex; gap: 8px; align-items: center; }
+.chat-controls {
+  position: sticky;
+  bottom: 12px;
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  background: rgba(8, 19, 24, 0.94);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
+}
 .mic-btn {
   padding: 10px 16px; border-radius: 999px; border: 1px solid var(--border);
   background: var(--bg-card); color: var(--text); cursor: pointer; font-size: 13px;
@@ -467,6 +490,13 @@ function resetAll() {
 .sc-fill { height: 100%; background: var(--accent); border-radius: 3px; }
 
 .rep-title { font-size: 14px; font-weight: 600; margin: 16px 0 6px; }
+.rep-title,
+.msg-hint,
+.live-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 .rep-weak { color: var(--missed); }
 .rep-good { color: var(--lit); }
 .rep-list { margin: 0; padding-left: 18px; font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
@@ -518,9 +548,9 @@ function resetAll() {
   border-radius: 4px;
   flex-shrink: 0;
 }
-.ex-tag-ai { background: rgba(91, 140, 255, 0.15); color: #93b4ff; }
-.ex-tag-you { background: rgba(139, 92, 246, 0.15); color: #c4b5fd; }
-.ex-tag-good { background: rgba(52, 211, 153, 0.15); color: var(--lit); }
+.ex-tag-ai { background: rgba(100, 181, 255, 0.14); color: var(--word); }
+.ex-tag-you { background: rgba(102, 227, 210, 0.14); color: var(--phrase); }
+.ex-tag-good { background: rgba(183, 243, 107, 0.14); color: var(--lit); }
 .ex-better { color: var(--lit); }
 .ex-note {
   font-size: 12px;
@@ -533,4 +563,18 @@ function resetAll() {
 .target-used { color: var(--lit); }
 .target-missed { color: var(--text-muted); }
 .report-actions { display: flex; gap: 10px; margin-top: 18px; }
+
+@media (max-width: 600px) {
+  .practice-page { max-width: 100%; }
+  .module-header { align-items: flex-start; gap: 12px; }
+  .module-header .badge { flex-shrink: 0; }
+  .chat-controls { flex-wrap: wrap; bottom: 8px; }
+  .text-input { order: 1; flex-basis: calc(100% - 76px); min-width: 0; }
+  .chat-controls > .btn { order: 1; }
+  .mic-btn { width: 100%; justify-content: center; }
+  .score-grid,
+  .target-cols { grid-template-columns: 1fr; }
+  .msg { max-width: 92%; }
+  .report-actions { flex-wrap: wrap; }
+}
 </style>
