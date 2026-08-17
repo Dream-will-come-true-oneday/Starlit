@@ -22,19 +22,20 @@
         @click="selectLevel(lv)"
       >
         L{{ lv }} · {{ LEVEL_NAMES[lv] }}
-        <span v-if="lv > unlockedLevel" class="lock">🔒</span>
+        <span v-if="lv > unlockedLevel" class="lock"><AppIcon name="archive" :size="13" /></span>
       </button>
     </div>
-    <p v-if="unlockedLevel < 5" class="level-tip">🔒 点击锁定等级可从该难度开始学习（跳过前面内容，已学保留）</p>
+    <p v-if="unlockedLevel < 5" class="level-tip"><AppIcon name="archive" :size="13" /> 点击锁定等级可从该难度开始学习（跳过前面内容，已学保留）</p>
 
     <!-- 学习会话 -->
     <section v-if="sessionActive" class="card learn-session fade-in">
       <div class="ls-progress">正在学习 {{ sessionIndex + 1 }} / {{ sessionItems.length }}</div>
       <WordCard :item="sessionItems[sessionIndex]" />
       <div class="ls-actions">
-        <button class="btn btn-outline" @click="flipHint">重新看</button>
+        <button class="btn btn-outline" @click="flipHint"><AppIcon name="refresh" :size="15" /> 重新看</button>
         <button class="btn btn-primary" @click="markCurrentLearned">
-          {{ sessionIndex < sessionItems.length - 1 ? '记住了，下一个 →' : '完成本组学习 ✓' }}
+          <template v-if="sessionIndex < sessionItems.length - 1">记住了，下一个 <AppIcon name="arrowRight" :size="14" /></template>
+          <template v-else>完成本组学习 <AppIcon name="check" :size="14" /></template>
         </button>
       </div>
       <div class="ls-note">提示：点击卡片翻转查看释义，想清楚再点"记住了"</div>
@@ -55,7 +56,7 @@
         class="btn btn-primary"
         @click="startSession(pendingWords)"
       >
-        开始学习 →
+        开始学习 <AppIcon name="play" :size="14" />
       </button>
     </section>
 
@@ -65,7 +66,7 @@
       <WordList :items="levelLearnedItems" :progress-map="progressMap" @select="selectedItem = $event" />
 
       <div v-if="!levelLearnedItems.length" class="empty">
-        <div class="empty-icon">📖</div>
+        <div class="empty-icon"><AppIcon name="book" :size="30" /></div>
         <p>这个等级还没有学习记录，先学一组新词吧</p>
       </div>
     </section>
@@ -78,7 +79,7 @@
             <span class="modal-word">{{ selectedItem.content }}</span>
             <span class="modal-meaning">{{ selectedItem.meaning }}</span>
           </div>
-          <button class="btn-ghost" @click="selectedItem = null">✕</button>
+          <button class="btn-ghost" aria-label="关闭记忆曲线" @click="selectedItem = null"><AppIcon name="close" :size="18" /></button>
         </div>
         <MemoryCurveChart :progress="progressMap[selectedItem.id] || null" />
         <p class="modal-example">{{ selectedItem.example }}</p>
@@ -93,6 +94,7 @@ import { ref, computed } from 'vue'
 import WordCard from '../components/word/WordCard.vue'
 import WordList from '../components/word/WordList.vue'
 import MemoryCurveChart from '../components/common/MemoryCurveChart.vue'
+import AppIcon from '../components/common/AppIcon.vue'
 import { useProgressStore } from '../stores/progressStore.js'
 import { usePlanStore } from '../stores/planStore.js'
 import { useModuleStore } from '../stores/moduleStore.js'
@@ -130,8 +132,14 @@ const pendingWords = computed(() => {
 
 /** 等级标签点击：未锁直接切换；锁定等级需确认后调整本模块起点 */
 function selectLevel(lv) {
-  if (lv <= unlockedLevel.value) {
+  if (lv === currentLevel.value) {
+    return
+  }
+
+  if (lv < unlockedLevel.value) {
+    progress.setModuleLevel('word', lv)
     currentLevel.value = lv
+    plan.invalidate()
     return
   }
   const ok = window.confirm(
@@ -140,6 +148,7 @@ function selectLevel(lv) {
   if (ok) {
     progress.setModuleLevel('word', lv)
     currentLevel.value = lv
+    plan.invalidate()
   }
 }
 
@@ -236,7 +245,7 @@ function flipHint() {
 .level-tab.active {
   background: rgba(91, 140, 255, 0.15);
   border-color: var(--word);
-  color: #93b4ff;
+  color: var(--word);
 }
 
 .level-tab.locked {
@@ -326,7 +335,7 @@ function flipHint() {
 .modal-word {
   font-size: 22px;
   font-weight: 600;
-  color: #93b4ff;
+  color: var(--word);
 }
 
 .modal-meaning {

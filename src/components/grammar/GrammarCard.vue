@@ -24,7 +24,7 @@ defineProps({
 <style scoped>
 .grammar-card {
   background: var(--bg-card);
-  border: 1px solid rgba(245, 158, 11, 0.35);
+  border: 1px solid rgba(243, 181, 98, 0.38);
   border-radius: var(--radius);
   padding: 24px;
   min-height: 200px;
@@ -33,7 +33,7 @@ defineProps({
 .gc-title {
   font-size: 22px;
   font-weight: 600;
-  color: #fcd34d;
+  color: var(--grammar);
 }
 
 .gc-meaning {
@@ -61,8 +61,8 @@ defineProps({
 code {
   font-family: 'SF Mono', Consolas, 'Courier New', monospace;
   font-size: 13px;
-  color: #93b4ff;
-  background: rgba(91, 140, 255, 0.1);
+  color: var(--word);
+  background: rgba(100, 181, 255, 0.1);
   padding: 3px 8px;
   border-radius: 6px;
 }

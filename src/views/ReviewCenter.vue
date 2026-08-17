@@ -14,7 +14,7 @@
     <!-- 今日待复盘 -->
     <section class="card review-section">
       <div class="card-title">
-        <span>🔁 今日待复盘</span>
+        <span class="title-with-icon"><AppIcon name="refresh" :size="16" /> 今日待复盘</span>
         <span v-if="todayReviews.length" class="badge badge-pending">{{ todayReviews.length }} 项</span>
       </div>
       <div v-if="todayReviews.length" class="review-list">
@@ -38,7 +38,7 @@
         </div>
       </div>
       <div v-else class="empty-sm">
-        🎉 今日记忆节点已全部完成，太棒了！
+        <span class="review-complete"><AppIcon name="check" :size="18" /> 今日记忆节点已全部完成</span>
         <div class="empty-sub">记忆曲线（Day 1/2/4/7/15/30）会在到期日自动提醒你</div>
       </div>
     </section>
@@ -70,7 +70,7 @@
         </div>
       </div>
       <div v-else class="empty">
-        <div class="empty-icon">🗂️</div>
+        <div class="empty-icon"><AppIcon name="archive" :size="30" /></div>
         <p>还没有需要复习的内容，先学一些新知识吧</p>
       </div>
     </section>
@@ -81,6 +81,7 @@
 import { ref, computed, onMounted } from 'vue'
 import MemoryCurveChart from '../components/common/MemoryCurveChart.vue'
 import ReviewCheckIn from '../components/common/ReviewCheckIn.vue'
+import AppIcon from '../components/common/AppIcon.vue'
 import { useReviewStore } from '../stores/reviewStore.js'
 import { useProgressStore } from '../stores/progressStore.js'
 import { usePlanStore } from '../stores/planStore.js'
@@ -156,6 +157,15 @@ onMounted(() => {
 .review-section {
   margin-bottom: 20px;
 }
+
+.title-with-icon,
+.review-complete {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.review-complete { color: var(--lit); }
 
 .review-list {
   display: flex;

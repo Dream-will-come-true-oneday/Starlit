@@ -41,13 +41,16 @@ export const useReviewStore = defineStore('review', {
       const pending = getTodayPendingReviews(progress.data.progress)
       this.todayReviews = pending.map((r) => {
         const item = getItemById(r.itemId)
+        const progressItem = progress.data.progress.find((p) => p.itemId === r.itemId)
+        const review = progressItem?.reviews.find((entry) => entry.reviewId === r.reviewId)
         return {
           ...r,
+          scheduledDate: review?.scheduledDate || '',
           content: item ? item.content : r.itemId,
           meaning: item ? item.meaning : '',
           example: item ? item.example : '',
           exampleCn: item ? item.exampleCn : '',
-          learnedDate: progress.data.progress.find((p) => p.itemId === r.itemId)?.learnedDate || ''
+          learnedDate: progressItem?.learnedDate || ''
         }
       })
     },

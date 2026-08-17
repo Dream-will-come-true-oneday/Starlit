@@ -1,6 +1,6 @@
 <template>
   <section v-if="sessionActive" class="card learn-session fade-in">
-    <div class="ls-progress">
+    <div class="ls-progress"><span class="ls-state">LIVE SESSION</span>
       正在学习 {{ index + 1 }} / {{ sessionItems.length }}
       <span class="ls-count">(本组 {{ sessionItems.length }} 项)</span>
     </div>
@@ -8,9 +8,10 @@
     <component :is="cardComponent" :item="sessionItems[index]" />
 
     <div class="ls-actions">
-      <button class="btn btn-outline btn-sm" @click="skipHint">查看提示</button>
+      <button class="btn btn-outline btn-sm" @click="skipHint"><AppIcon name="search" :size="14" /> 查看提示</button>
       <button class="btn btn-primary" @click="markLearned">
-        {{ index < sessionItems.length - 1 ? '记住了，下一个 →' : '完成本组学习 ✓' }}
+        <template v-if="index < sessionItems.length - 1">记住了，下一个 <AppIcon name="arrowRight" :size="14" /></template>
+        <template v-else>完成本组学习 <AppIcon name="check" :size="14" /></template>
       </button>
     </div>
     <div class="ls-note">完成本组后自动生成记忆曲线复习计划（Day 1/2/4/7/15/30）</div>
@@ -19,6 +20,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import AppIcon from './AppIcon.vue'
 
 const props = defineProps({
   /** 卡片组件（动态渲染） */

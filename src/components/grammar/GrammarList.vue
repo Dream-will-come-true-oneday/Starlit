@@ -1,6 +1,6 @@
 <template>
   <div class="grammar-list">
-    <div v-for="item in items" :key="item.id" class="grammar-row" @click="$emit('select', item)">
+    <div v-for="item in items" :key="item.id" class="grammar-row" role="button" tabindex="0" :aria-label="`查看 ${item.content} 的记忆曲线`" @click="$emit('select', item)" @keydown.enter.prevent="$emit('select', item)" @keydown.space.prevent="$emit('select', item)">
       <div class="gr-main">
         <span class="gr-content">{{ item.content }}</span>
         <span class="gr-meaning">{{ item.meaning }}</span>
@@ -60,7 +60,7 @@ defineEmits(['select'])
 .gr-content {
   font-size: 15px;
   font-weight: 600;
-  color: #fcd34d;
+  color: var(--grammar);
 }
 
 .gr-meaning {

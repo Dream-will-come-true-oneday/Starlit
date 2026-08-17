@@ -1,6 +1,6 @@
 <template>
   <div class="phrase-list">
-    <div v-for="item in items" :key="item.id" class="phrase-row" @click="$emit('select', item)">
+    <div v-for="item in items" :key="item.id" class="phrase-row" role="button" tabindex="0" :aria-label="`查看 ${item.content} 的记忆曲线`" @click="$emit('select', item)" @keydown.enter.prevent="$emit('select', item)" @keydown.space.prevent="$emit('select', item)">
       <div class="pr-main">
         <span class="pr-content">{{ item.content }}</span>
         <span class="pr-meaning">{{ item.meaning }}</span>
@@ -60,7 +60,7 @@ defineEmits(['select'])
 .pr-content {
   font-size: 15px;
   font-weight: 600;
-  color: #6ee7b7;
+  color: var(--phrase);
 }
 
 .pr-meaning {

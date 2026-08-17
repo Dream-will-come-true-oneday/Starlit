@@ -30,7 +30,12 @@
         v-for="(node, i) in curve"
         :key="node.reviewId"
         :class="['curve-node', { clickable: isClickable(node) }]"
+        :tabindex="isClickable(node) ? 0 : undefined"
+        :role="isClickable(node) ? 'button' : undefined"
+        :aria-label="nodeTooltip(node)"
         @click="onNodeClick(node)"
+        @keydown.enter.prevent="onNodeClick(node)"
+        @keydown.space.prevent="onNodeClick(node)"
       >
         <title>{{ nodeTooltip(node) }}</title>
 
@@ -204,6 +209,16 @@ function onNodeClick(node) {
   transform-origin: center;
   transform-box: fill-box;
   transition: transform 0.12s, filter 0.12s;
+}
+
+.curve-node.clickable:focus-visible {
+  outline: none;
+}
+
+.curve-node.clickable:focus-visible circle:nth-of-type(2) {
+  stroke: var(--accent);
+  stroke-width: 3px;
+  filter: drop-shadow(0 0 5px rgba(183, 243, 107, 0.7));
 }
 
 .node-label {

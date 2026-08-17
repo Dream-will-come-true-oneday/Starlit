@@ -4,9 +4,10 @@
     <div class="dash-hero">
       <div>
         <h1 class="page-title">{{ greeting }}，继续加油！</h1>
-        <p class="page-desc">{{ todayCn }} · 四模块难度独立 · 记忆曲线自动安排复盘</p>
+        <p class="page-desc dash-kicker"><span class="signal-dot"></span>{{ todayCn }} · DAILY LEARNING CYCLE</p>
       </div>
       <div class="hero-streak">
+        <AppIcon name="flame" :size="18" />
         <div class="streak-num">{{ progress.data.streakDays }}</div>
         <div class="streak-label">连续打卡（天）</div>
       </div>
@@ -17,8 +18,8 @@
       <!-- 今日新学 -->
       <div class="card today-card">
         <div class="card-title">
-          <span>📚 今日新学</span>
-          <router-link to="/plan" class="more-link">查看规划 →</router-link>
+          <span class="title-with-icon"><AppIcon name="book" :size="16" /> 今日新学</span>
+          <router-link to="/plan" class="more-link">查看规划 <AppIcon name="chevronRight" :size="14" /></router-link>
         </div>
         <div v-if="newItemsFlat.length" class="today-items">
           <div v-for="item in newItemsFlat" :key="item.id" class="today-item">
@@ -30,20 +31,20 @@
             {{ sentence.en }}
           </div>
         </div>
-        <div v-else class="empty-sm">今天的新学内容已全部完成 🎉</div>
+        <div v-else class="empty-sm"><AppIcon name="check" :size="20" />今天的新学内容已全部完成</div>
         <div class="today-actions">
           <router-link :to="'/words'" class="btn btn-primary btn-sm">去学单词</router-link>
           <router-link :to="'/phrases'" class="btn btn-outline btn-sm">短语</router-link>
           <router-link :to="'/grammar'" class="btn btn-outline btn-sm">语法</router-link>
           <router-link :to="'/extra'" class="btn btn-outline btn-sm">其他</router-link>
         </div>
-        <router-link to="/practice" class="practice-entry">🎙️ 用今天学的内容，和 AI 对话练习 →</router-link>
+        <router-link to="/practice" class="practice-entry"><AppIcon name="mic" :size="16" /> 用今天学的内容，和 AI 对话练习 <AppIcon name="arrowRight" :size="14" /></router-link>
       </div>
 
       <!-- 今日复盘 -->
       <div class="card today-card">
         <div class="card-title">
-          <span>🔁 今日复盘</span>
+          <span class="title-with-icon"><AppIcon name="refresh" :size="16" /> 今日复盘</span>
           <span v-if="todayReviews.length" class="badge badge-pending">{{ todayReviews.length }} 项待打卡</span>
           <span v-else class="badge badge-lit">全部完成</span>
         </div>
@@ -58,17 +59,17 @@
           </div>
         </div>
         <div v-else class="empty-sm">
-          今天没有待复盘的记忆节点 🎉
+          <span><AppIcon name="check" :size="20" />今天没有待复盘的记忆节点</span>
           <div class="empty-sub">已按艾宾浩斯曲线（Day 1/2/4/7/15/30）自动安排</div>
         </div>
-        <router-link to="/review" class="btn btn-ghost btn-sm review-link">进入复盘中心 →</router-link>
+        <router-link to="/review" class="btn btn-ghost btn-sm review-link">进入复盘中心 <AppIcon name="arrowRight" :size="14" /></router-link>
       </div>
     </div>
 
     <!-- 进度总览 -->
     <div class="card progress-card">
       <div class="card-title">
-        <span>📊 学习进度</span>
+        <span class="title-with-icon"><AppIcon name="bars" :size="16" /> 学习进度</span>
         <span class="badge badge-lv">共 {{ contentStats.total }} 个知识点</span>
       </div>
       <div class="progress-grid">
@@ -88,7 +89,7 @@
     <!-- 各模块难度（独立） -->
     <div class="card level-card">
       <div class="card-title">
-        <span>🏆 各模块难度</span>
+        <span class="title-with-icon"><AppIcon name="target" :size="16" /> 各模块难度</span>
         <span class="badge">独立起点 · 互不影响</span>
       </div>
       <div v-for="m in moduleLevels" :key="m.type" class="mod-level-row">
@@ -111,7 +112,7 @@
     <!-- 数据管理 -->
     <div class="card data-card">
       <div class="card-title">
-        <span>💾 数据备份</span>
+        <span class="title-with-icon"><AppIcon name="database" :size="16" /> 数据备份</span>
         <span class="badge">本地存储 · 上线后自动云同步</span>
       </div>
       <p class="data-tip">学习数据保存在浏览器本地。建议定期导出备份，换设备或清缓存前务必导出。</p>
@@ -131,6 +132,7 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue'
 import ReviewCheckIn from '../components/common/ReviewCheckIn.vue'
+import AppIcon from '../components/common/AppIcon.vue'
 import { useProgressStore } from '../stores/progressStore.js'
 import { useReviewStore } from '../stores/reviewStore.js'
 import { usePlanStore } from '../stores/planStore.js'
@@ -284,7 +286,7 @@ onMounted(() => {
 
 .hero-streak {
   text-align: center;
-  background: linear-gradient(135deg, rgba(52, 211, 153, 0.15), rgba(139, 92, 246, 0.15));
+  background: rgba(16, 35, 42, 0.88);
   border: 1px solid rgba(52, 211, 153, 0.35);
   border-radius: var(--radius);
   padding: 12px 22px;
@@ -359,7 +361,7 @@ onMounted(() => {
 .today-sentence {
   margin-top: 10px;
   padding: 10px 12px;
-  background: rgba(139, 92, 246, 0.08);
+  background: rgba(100, 181, 255, 0.08);
   border-left: 3px solid var(--accent);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   font-size: 14px;
@@ -381,7 +383,7 @@ onMounted(() => {
   border-radius: var(--radius-sm);
   background: rgba(91, 140, 255, 0.08);
   border: 1px dashed rgba(91, 140, 255, 0.45);
-  color: #93b4ff;
+  color: var(--phrase);
   font-size: 13px;
   text-align: center;
   transition: all 0.2s;
@@ -480,10 +482,10 @@ onMounted(() => {
   font-weight: 600;
 }
 
-.txt-word { color: #93b4ff; }
-.txt-phrase { color: #6ee7b7; }
-.txt-grammar { color: #fcd34d; }
-.txt-extra { color: #c4b5fd; }
+.txt-word { color: var(--word); }
+.txt-phrase { color: var(--phrase); }
+.txt-grammar { color: var(--grammar); }
+.txt-extra { color: var(--accent); }
 
 .pi-pct {
   font-size: 13px;
@@ -545,10 +547,10 @@ onMounted(() => {
 }
 
 .level-node.active .ln-circle {
-  background: rgba(139, 92, 246, 0.2);
+  background: rgba(183, 243, 107, 0.12);
   border-color: var(--accent);
-  color: #c4b5fd;
-  box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+  color: var(--accent);
+  box-shadow: 0 0 12px rgba(183, 243, 107, 0.25);
 }
 
 .level-node.done .ln-circle {
@@ -647,5 +649,72 @@ onMounted(() => {
   .progress-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.title-with-icon,
+.more-link,
+.practice-entry,
+.dash-kicker,
+.empty-sm > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.dash-kicker {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.dash-kicker .signal-dot {
+  width: 6px;
+  height: 6px;
+}
+
+.hero-streak {
+  position: relative;
+  min-width: 132px;
+  background: rgba(16, 35, 42, 0.88);
+  border-color: rgba(183, 243, 107, 0.42);
+  box-shadow: var(--glow);
+}
+
+.hero-streak > svg {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: var(--pending);
+}
+
+.practice-entry {
+  justify-content: center;
+  border-color: rgba(102, 227, 210, 0.38);
+  background: rgba(102, 227, 210, 0.06);
+  color: var(--phrase);
+}
+
+.practice-entry:hover {
+  background: rgba(102, 227, 210, 0.12);
+}
+
+.empty-sm > svg {
+  margin: 0 auto 8px;
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .dash-hero {
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .hero-streak {
+    min-width: 104px;
+    padding: 10px 12px;
+  }
+
+  .streak-num { font-size: 28px; }
+  .streak-label { font-size: 10px; }
 }
 </style>
